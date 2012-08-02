@@ -46,7 +46,15 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     [self invokeMethod:method withParameters:parameters withRequestId:@"1" success:success failure:failure];
 }
 
-- (void)invokeMethod:(NSString *)method 
+- (void)invokeMethod:(NSString *)method withParameters:(NSArray *)parameters {
+    [self invokeMethod:method withParameters:parameters withRequestId:nil success:nil failure:nil];
+}
+
+- (void)invokeMethod:(NSString *)method {
+    [self invokeMethod:method withParameters:[NSArray array]];
+}
+
+- (void)invokeMethod:(NSString *)method
       withParameters:(NSArray *)parameters
        withRequestId:(NSString *)requestId
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
@@ -57,6 +65,7 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     AFJSONRequestOperation *operation = [[[AFJSONRequestOperation alloc] initWithRequest:request] autorelease];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (requestId == nil) return;
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             id result = [responseObject objectForKey:@"result"];
             id error = [responseObject objectForKey:@"error"];
@@ -101,10 +110,10 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     [self.operationQueue addOperation:operation];
 }
 
-- (NSMutableURLRequest *)requestWithMethod:(NSString *)method 
+- (NSMutableURLRequest *)requestWithMethod:(NSString *)method
                                 parameters:(NSArray *)parameters
                                  requestId:(NSString *)requestId
-{	
+{
     NSString *charset = (NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
     
 	NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:self.endpointURL] autorelease];
@@ -112,11 +121,11 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     [request setValue:[NSString stringWithFormat:@"application/json; charset=%@", charset] forHTTPHeaderField:@"Content-Type"];
     
     NSDictionary *JSONRPCStruct = [NSDictionary dictionaryWithObjectsAndKeys:
-						@"2.0", @"jsonrpc",
-						method, @"method",
-                        parameters, @"params",
-						requestId, @"id",
-						nil];
+                                   @"2.0", @"jsonrpc",
+                                   method, @"method",
+                                   parameters, @"params",
+                                   requestId, @"id",
+                                   nil];
     
     NSError *error = nil;
     NSData *JSONData = AFJSONEncode(JSONRPCStruct, &error);
