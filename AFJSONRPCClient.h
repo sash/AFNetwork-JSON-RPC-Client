@@ -23,25 +23,25 @@
 
 - (void)invokeMethod:(NSString *)method;
 - (void)invokeMethod:(NSString *)method
-      withParameters:(NSArray *)parameters;
+      withParameters:(id)parameters;
 
 - (void)invokeMethod:(NSString *)method
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (void)invokeMethod:(NSString *)method
-      withParameters:(NSArray *)parameters
+      withParameters:(id)parameters
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (void)invokeMethod:(NSString *)method 
-      withParameters:(NSArray *)parameters
+      withParameters:(id)parameters
        withRequestId:(NSString *)requestId
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method 
-                                parameters:(NSArray *)parameters
+                                parameters:(id)parameters
                                  requestId:(NSString *)requestId;
 
 @end

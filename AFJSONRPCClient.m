@@ -39,14 +39,15 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
 }
 
 - (void)invokeMethod:(NSString *)method
-      withParameters:(NSArray *)parameters
+      withParameters:(id)parameters
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
     [self invokeMethod:method withParameters:parameters withRequestId:@"1" success:success failure:failure];
 }
 
-- (void)invokeMethod:(NSString *)method withParameters:(NSArray *)parameters {
+- (void)invokeMethod:(NSString *)method
+      withParameters:(id)parameters {
     [self invokeMethod:method withParameters:parameters withRequestId:nil success:nil failure:nil];
 }
 
@@ -55,7 +56,7 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
 }
 
 - (void)invokeMethod:(NSString *)method
-      withParameters:(NSArray *)parameters
+      withParameters:(id)parameters
        withRequestId:(NSString *)requestId
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
@@ -111,7 +112,7 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
 }
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method
-                                parameters:(NSArray *)parameters
+                                parameters:(id)parameters
                                  requestId:(NSString *)requestId
 {
     NSString *charset = (NSString *)CFStringConvertEncodingToIANACharSetName(CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding));
