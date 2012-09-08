@@ -115,17 +115,23 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
                                 parameters:(id)parameters
                                  requestId:(NSString *)requestId
 {
+    if (method == nil || [method length] == 0)
+        [NSException raise:NSInvalidArgumentException format:@"Invalid method specified: %@", method];
+
 	NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] initWithURL:self.endpointURL] autorelease];
     [request setHTTPMethod:@"POST"];
-    
-    NSDictionary *JSONRPCStruct = [NSDictionary dictionaryWithObjectsAndKeys:
-                                   @"2.0", @"jsonrpc",
-                                   method, @"method",
-                                   parameters, @"params",
-                                   requestId, @"id",
-                                   nil];
-    
     [request setValue:@"application/json; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+
+    NSMutableDictionary *JSONRPCStruct = [NSMutableDictionary dictionaryWithCapacity:4];
+    [JSONRPCStruct setObject:@"2.0" forKey:@"jsonrpc"];
+    [JSONRPCStruct setObject:method forKey:@"method"];
+
+    if (parameters != nil)
+        [JSONRPCStruct setObject:parameters forKey:@"params"];
+
+    if (requestId != nil)
+        [JSONRPCStruct setObject:requestId forKey:@"id"];
+
     NSError *error = nil;
     NSData *JSONData = AFJSONEncode(JSONRPCStruct, &error);
     if (!error) {
