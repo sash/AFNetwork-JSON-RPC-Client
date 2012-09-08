@@ -66,7 +66,6 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     AFJSONRequestOperation *operation = [[[AFJSONRequestOperation alloc] initWithRequest:request] autorelease];
     
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (requestId == nil) return;
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             id result = [responseObject objectForKey:@"result"];
             id error = [responseObject objectForKey:@"error"];
@@ -110,6 +109,39 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     
     [self.operationQueue addOperation:operation];
 }
+
+#pragma mark - Notification invocation
+
+- (void)invokeNotification:(NSString *)notification {
+    [self invokeNotification:notification withParameters:nil];
+}
+
+- (void)invokeNotification:(NSString *)notification withParameters:(id)parameters {
+    [self invokeNotification:notification withParameters:parameters success:nil failure:nil];
+}
+
+- (void)invokeNotification:(NSString *)notification
+            withParameters:(id)parameters
+                   success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
+{
+    NSURLRequest *request = [self requestWithMethod:notification parameters:parameters requestId:nil];
+
+    AFHTTPRequestOperation *operation = [[[AFHTTPRequestOperation alloc] initWithRequest:request] autorelease];
+
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (success) {
+            success(operation, responseObject);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (failure) {
+            failure(operation, error);
+        }
+    }];
+    [self.operationQueue addOperation:operation];
+}
+
+#pragma mark -
 
 - (NSMutableURLRequest *)requestWithMethod:(NSString *)method
                                 parameters:(id)parameters

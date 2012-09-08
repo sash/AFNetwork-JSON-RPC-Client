@@ -40,8 +40,10 @@
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 
-- (NSMutableURLRequest *)requestWithMethod:(NSString *)method 
-                                parameters:(id)parameters
-                                 requestId:(NSString *)requestId;
-
+- (void)invokeNotification:(NSString *)notification;
+- (void)invokeNotification:(NSString *)notification withParameters:(id)parameters;
+- (void)invokeNotification:(NSString *)notification
+            withParameters:(id)parameters
+                   success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
+                   failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure;
 @end
