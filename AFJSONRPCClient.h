@@ -22,8 +22,7 @@
 - (id)initWithURL:(NSURL *)url;
 
 - (void)invokeMethod:(NSString *)method;
-- (void)invokeMethod:(NSString *)method
-      withParameters:(id)parameters;
+- (void)invokeMethod:(NSString *)method withParameters:(id)parameters;
 
 - (void)invokeMethod:(NSString *)method
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success

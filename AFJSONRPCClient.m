@@ -31,6 +31,17 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     return self;
 }
 
+#pragma mark - Method invocation
+
+- (void)invokeMethod:(NSString *)method {
+    [self invokeMethod:method withParameters:nil];
+}
+
+- (void)invokeMethod:(NSString *)method
+      withParameters:(id)parameters {
+    [self invokeMethod:method withParameters:parameters withRequestId:@"1" success:nil failure:nil];
+}
+
 - (void)invokeMethod:(NSString *)method
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
@@ -46,14 +57,6 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     [self invokeMethod:method withParameters:parameters withRequestId:@"1" success:success failure:failure];
 }
 
-- (void)invokeMethod:(NSString *)method
-      withParameters:(id)parameters {
-    [self invokeMethod:method withParameters:parameters withRequestId:nil success:nil failure:nil];
-}
-
-- (void)invokeMethod:(NSString *)method {
-    [self invokeMethod:method withParameters:[NSArray array]];
-}
 
 - (void)invokeMethod:(NSString *)method
       withParameters:(id)parameters
