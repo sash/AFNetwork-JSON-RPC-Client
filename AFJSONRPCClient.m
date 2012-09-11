@@ -35,7 +35,7 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
              success:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success
              failure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure
 {
-    [self invokeMethod:method withParameters:[NSArray array] withRequestId:@"1" success:success failure:failure];
+    [self invokeMethod:method withParameters:nil withRequestId:@"1" success:success failure:failure];
 }
 
 - (void)invokeMethod:(NSString *)method
