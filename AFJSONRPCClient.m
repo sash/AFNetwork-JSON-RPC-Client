@@ -7,7 +7,6 @@
 //
 
 #import "AFJSONRPCClient.h"
-#import "AFJSONUtilities.h"
 
 NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
 
@@ -168,7 +167,7 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
         [JSONRPCStruct setObject:requestId forKey:@"id"];
 
     NSError *error = nil;
-    NSData *JSONData = AFJSONEncode(JSONRPCStruct, &error);
+    NSData *JSONData = [NSJSONSerialization dataWithJSONObject:JSONRPCStruct options:0 error:&error];
     if (!error) {
         [request setHTTPBody:JSONData];
     }
