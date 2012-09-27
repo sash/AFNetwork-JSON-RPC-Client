@@ -73,9 +73,7 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
             id error = [responseObject objectForKey:@"error"];
             
             if (result && result != [NSNull null]) {
-                if (success) {
-                    success(operation, result);
-                }
+                [self handleSuccess:success withOperation:operation result:result];
             } else if (error && error != [NSNull null]) {
                 if (failure) {
                     NSInteger errorCode = 0;
@@ -90,7 +88,8 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
                     
                     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:errorMessage, NSLocalizedDescriptionKey, nil];
                     NSError *error = [NSError errorWithDomain:AFJSONRPCErrorDomain code:errorCode userInfo:userInfo];
-                    failure(operation, error);
+                    
+                    [self handleFailure:failure withOperation:operation error:error];
                 }
             } else {
                 if (failure) {
@@ -99,14 +98,13 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
                     
                     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:errorMessage, NSLocalizedDescriptionKey, nil];
                     NSError *error = [NSError errorWithDomain:AFJSONRPCErrorDomain code:errorCode userInfo:userInfo];
-                    failure(operation, error);
+                    
+                    [self handleFailure:failure withOperation:operation error:error];
                 }
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        if (failure) {
-            failure(operation, error);
-        }
+        [self handleFailure:failure withOperation:operation error:error];
     }];
     
     [self.operationQueue addOperation:operation];
@@ -132,13 +130,9 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     AFHTTPRequestOperation *operation = [[[AFHTTPRequestOperation alloc] initWithRequest:request] autorelease];
 
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if (success) {
-            success(operation, responseObject);
-        }
+        [self handleSuccess:success withOperation:operation result:nil];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        if (failure) {
-            failure(operation, error);
-        }
+        [self handleFailure:failure withOperation:operation error:error];
     }];
     [self.operationQueue addOperation:operation];
 }
@@ -173,6 +167,16 @@ NSString * const AFJSONRPCErrorDomain = @"org.json-rpc";
     }
     
 	return request;
+}
+- (void)handleSuccess:(void (^)(AFHTTPRequestOperation *operation, id responseObject))success withOperation:(AFHTTPRequestOperation *)operation result:(id) result{
+    if (success) {
+        success(operation, result);
+    }
+}
+- (void)handleFailure:(void (^)(AFHTTPRequestOperation *operation, NSError *error))failure withOperation:(AFHTTPRequestOperation *) operation error:(NSError *)error{
+    if (failure) {
+        failure(operation, error);
+    }
 }
 
 - (void)dealloc
